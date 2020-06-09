@@ -6,6 +6,7 @@
 #include <vector>
 #include <mutex>
 #include <chrono>
+#include <string>
 
 #define RANDOM_MULTIPLIER 0x5DEECE66DULL
 #define RANDOM_ADDEND 0xBULL
@@ -88,9 +89,9 @@ __global__ __launch_bounds__(256, 2) void crack(uint64_t seed_offset, int32_t *n
 
     int16_t i, a, j;
 
-    for (i = 0; i < 10; i++) {
+    for (i = 90; i > 0; i -= 9) {
         // Keep, most threads finish early this way
-        if (WANTED_CACTUS_HEIGHT - heightMap[currentHighestPos] + FLOOR_LEVEL > 9 * (10 - i))
+        if (WANTED_CACTUS_HEIGHT - heightMap[currentHighestPos] + FLOOR_LEVEL > i)
             return;
 
         initialPosX = java_random::next(&seed, 4) + 8;
@@ -106,17 +107,17 @@ __global__ __launch_bounds__(256, 2) void crack(uint64_t seed_offset, int32_t *n
 
             posMap = posX + posZ * 32;
             // Keep
-            if (posY <= heightMap[posMap] && posY >= 0)
+            if (posY <= heightMap[posMap])
                 continue;
 
             offset = 1 + java_random::next_int_unknown(&seed, java_random::next_int(&seed) + 1);
 
             for (j = 0; j < offset; j++) {
                 if ((posY + j - 1) > heightMap[posMap] || posY < 0) continue;
-                if ((posY + j) <= heightMap[(posX + 1) + posZ * 32] && posY >= 0) continue;
-                if ((posY + j) <= heightMap[posX + (posZ - 1) * 32] && posY >= 0) continue;
-                if ((posY + j) <= heightMap[(posX - 1) + posZ * 32] && posY >= 0) continue;
-                if ((posY + j) <= heightMap[posX + (posZ + 1) * 32] && posY >= 0) continue;
+                if ((posY + j) <= heightMap[(posX + 1) + posZ * 32]) continue;
+                if ((posY + j) <= heightMap[posX + (posZ - 1) * 32]) continue;
+                if ((posY + j) <= heightMap[(posX - 1) + posZ * 32]) continue;
+                if ((posY + j) <= heightMap[posX + (posZ + 1) * 32]) continue;
 
                 heightMap[posMap]++;
 
