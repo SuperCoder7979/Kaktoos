@@ -76,10 +76,7 @@ __global__ __launch_bounds__(256, 2) void crack(uint64_t seed_offset, int32_t *n
 
     int8_t heightMap[1024];
 
-#pragma unroll
-    for (int i = 0; i < 1024; i++) {
-        heightMap[i] = FLOOR_LEVEL;
-    }
+    memset(heightMap, FLOOR_LEVEL, 1024);
 
     int16_t currentHighestPos = 0;
     int16_t terrainHeight;
