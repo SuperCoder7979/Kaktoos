@@ -103,7 +103,6 @@ __global__ __launch_bounds__(256, 2) void crack(uint64_t seed_offset, int32_t *n
             posZ = initialPosZ + java_random::next(&seed, 3) - java_random::next(&seed, 3);
 
             posMap = heightMap + posX + posZ * 32;
-
             // Keep
             if (posY <= *posMap)
                 continue;
@@ -115,7 +114,7 @@ __global__ __launch_bounds__(256, 2) void crack(uint64_t seed_offset, int32_t *n
                 if ((posY + j) <= heightMap[(posX - 1) + posZ * 32]) continue;
                 if ((posY + j) <= heightMap[posX + (posZ + 1) * 32]) continue;
 
-                heightMap[posX + posZ * 32]++;
+                *posMap++;
 
                 if (*currentHighestPos < *posMap) {
                     currentHighestPos = posMap;
