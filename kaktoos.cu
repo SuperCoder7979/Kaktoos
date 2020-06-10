@@ -112,7 +112,8 @@ __global__ __launch_bounds__(256, 2) void crack(uint64_t seed_offset, int32_t *n
 
             offset = 1 + java_random::next_int_unknown(&seed, java_random::next_int(&seed) + 1);
 
-            for (j = 0; j < offset; j++) {
+            if (offset == 1) {
+                j = 0;
                 if ((posY + j - 1) > heightMap[posMap] || posY < 0) continue;
                 if ((posY + j) <= heightMap[(posX + 1) + posZ * 32]) continue;
                 if ((posY + j) <= heightMap[posX + (posZ - 1) * 32]) continue;
@@ -123,6 +124,25 @@ __global__ __launch_bounds__(256, 2) void crack(uint64_t seed_offset, int32_t *n
 
                 if (heightMap[currentHighestPos] < heightMap[posMap]) {
                     currentHighestPos = posMap;
+                }
+            } else {
+                register int8_t j0 = heightMap[posMap];
+                register int8_t j1 = heightMap[(posX + 1) + posZ * 32];
+                register int8_t j2 = heightMap[posX + (posZ - 1) * 32];
+                register int8_t j3 = heightMap[(posX - 1) + posZ * 32];
+                register int8_t j4 = heightMap[posX + (posZ + 1) * 32];
+                for (j = 0; j < offset; j++) {
+                    if ((posY + j - 1) > j0 || posY < 0) continue;
+                    if ((posY + j) <= j1) continue;
+                    if ((posY + j) <= j2) continue;
+                    if ((posY + j) <= j3) continue;
+                    if ((posY + j) <= j4) continue;
+
+                    heightMap[posMap]++;
+
+                    if (heightMap[currentHighestPos] < heightMap[posMap]) {
+                        currentHighestPos = posMap;
+                    }
                 }
             }
         }
